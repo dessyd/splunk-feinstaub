@@ -1,0 +1,64 @@
+name: Build and Release Splunk App
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Get repository name
+      id: repo_name
+      run: echo "name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_OUTPUT
+    
+    - name: Setup environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zip
+    
+    - name: Build Splunk app package (.spl file)
+      run: |
+        # Create a clean build directory
+        mkdir -p build/${{ steps.repo_name.outputs.name }}
+        
+        # Copy app contents to build directory, excluding unnecessary files
+        cp -r app/* build/${{ steps.repo_name.outputs.name }}/
+        
+        # Remove any local directories or temp files that shouldn't be in the package
+        find build/${{ steps.repo_name.outputs.name }} -name "local" -type d -exec rm -rf {} +
+        find build/${{ steps.repo_name.outputs.name }} -name "*.log" -type f -delete
+        find build/${{ steps.repo_name.outputs.name }} -name "*.tmp" -type f -delete
+        
+        # Create the .spl file (which is just a tar file)
+        cd build
+        tar -czf ${{ steps.repo_name.outputs.name }}.spl ${{ steps.repo_name.outputs.name }}
+        cd ..
+        
+        # Output the path for the next step
+        echo "SPL_PATH=build/${{ steps.repo_name.outputs.name }}.spl" >> $GITHUB_ENV
+    
+    - name: Get commit hash and date for release tag
+      id: commit_info
+      run: |
+        echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+    
+    - name: Create GitHub release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.commit_info.outputs.date }}-${{ steps.commit_info.outputs.sha_short }}
+        name: Release ${{ steps.repo_name.outputs.name }} v${{ steps.commit_info.outputs.date }}
+        body: |
+          Automated release of ${{ steps.repo_name.outputs.name }} Splunk app
+          
+          Commit: ${{ github.sha }}
+          Build Date: $(date +'%Y-%m-%d %H:%M:%S')
+        files: ${{ env.SPL_PATH }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
