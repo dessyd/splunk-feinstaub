@@ -122,7 +122,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: Latest Release
+          name: ${{ steps.repo_name.outputs.name }}
           body: |
             This is always the latest release of ${{ steps.repo_name.outputs.name }}.
             
