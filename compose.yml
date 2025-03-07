@@ -23,7 +23,7 @@ services:
     volumes:
       - so1-var:/opt/splunk/var
       - so1-etc:/opt/splunk/etc
-      - ./app:/opt/splunk/etc/apps/feinstaub
+      # - ./app:/opt/splunk/etc/apps/feinstaub
 
 networks:
   splunknet:
