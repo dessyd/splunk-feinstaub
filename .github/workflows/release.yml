@@ -112,6 +112,10 @@ jobs:
           # Show some debug info
           echo "Downloaded from: $ASSET_URL"
       
+      - name: Get current date
+        id: date
+        run: echo "formatted_date=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+      
       - name: Create or update 'latest' release
         uses: softprops/action-gh-release@v1
         with:
@@ -120,7 +124,7 @@ jobs:
           body: |
             This is always the latest release of ${{ steps.repo_name.outputs.name }}.
             
-            Last updated: $(date +'%Y-%m-%d %H:%M:%S')
+            Last updated: ${{ steps.date.outputs.formatted_date }}
             Based on commit: ${{ github.sha }}
           files: ${{ steps.repo_name.outputs.name }}.spl
           draft: false
