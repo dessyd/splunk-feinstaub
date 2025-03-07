@@ -1,35 +1,43 @@
-
-# Application-level permissions
-
+[default]
 []
 access = read : [ * ], write : [ admin, power ]
+export = system
+version = 9.4.1
+modtime = 1741260185.652853000
 
-### EVENT TYPES
+[app/install/install_source_checksum]
+version = 9.4.1
+modtime = 1741361553.699153000
+
+[app/launcher]
+version = 9.4.1
+modtime = 1741359499.825986000
+
+[app/package/check_for_updates]
+version = 9.4.1
+modtime = 1741359499.838038000
+
+[app/ui]
+version = 9.4.1
+modtime = 1741359499.824699000
 
 [eventtypes]
 export = system
 
-
-### PROPS
+[lookups]
+export = system
 
 [props]
 export = system
 
-
-### TRANSFORMS
-
 [transforms]
 export = system
 
-
-### LOOKUPS
-
-[lookups]
-export = system
-
-
-### VIEWSTATES: even normal users should be able to create shared viewstates
+[views/environmental_data]
+version = 9.4.1
+modtime = 1741280282.673321000
 
 [viewstates]
 access = read : [ * ], write : [ * ]
 export = system
+

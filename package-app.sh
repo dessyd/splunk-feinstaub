@@ -23,7 +23,7 @@ if [ -z "$SPLUNK_CONTAINER" ]; then
   
   # Wait for Splunk to be ready
   echo "⏳ Waiting for Splunk to be ready..."
-  timeout 120 bash -c 'until docker exec $(docker compose ps -q so1) curl -s -o /dev/null -w "%{http_code}" http://localhost:8000 | grep -q "200"; do sleep 5; echo -n "."; done'
+  timeout 240 bash -c 'until [ "$(docker container inspect -f "{{.State.Health.Status}}" $(docker compose ps -q so1))" = "healthy" ]; do sleep 5; echo -n "."; done'
   echo " ✅"
   
   # Update the container ID after starting
@@ -34,7 +34,7 @@ echo "🔄 Creating Splunk app package..."
 
 # Package the app
 echo "🔧 Running package command in Splunk..."
-docker exec $SPLUNK_CONTAINER sudo /opt/splunk/bin/splunk package app $APP_NAME -auth admin:$SPLUNK_PASSWORD
+docker exec $SPLUNK_CONTAINER sudo /opt/splunk/bin/splunk package app $APP_NAME -merge-local-meta true -auth admin:$SPLUNK_PASSWORD
 
 # The .spl file will be created at /opt/splunk/share/splunk/app_packages/
 SPL_PATH="/opt/splunk/share/splunk/app_packages/$APP_NAME.spl"
