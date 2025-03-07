@@ -4,9 +4,6 @@ on:
   push:
     branches: [ main, master ]
 
-permissions:
-  contents: write
-  
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -50,6 +47,7 @@ jobs:
       run: |
         echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         echo "date=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+        echo "formatted_date=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
     
     - name: Create GitHub release
       id: create_release
@@ -61,7 +59,7 @@ jobs:
           Automated release of ${{ steps.repo_name.outputs.name }} Splunk app
           
           Commit: ${{ github.sha }}
-          Build Date: $(date +'%Y-%m-%d %H:%M:%S')
+          Build Date: ${{ steps.commit_info.outputs.formatted_date }}
         files: ${{ env.SPL_PATH }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
