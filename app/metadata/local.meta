@@ -1,0 +1,22 @@
+[app/ui]
+version = 9.4.1
+modtime = 1741260038.672641000
+
+[app/launcher]
+version = 9.4.1
+modtime = 1741260038.673914000
+
+[app/package/check_for_updates]
+version = 9.4.1
+modtime = 1741260038.676140000
+
+[views/environmental_data]
+version = 9.4.1
+modtime = 1741280282.673321000
+
+[]
+access = read : [ * ], write : [ admin, power ]
+export = system
+version = 9.4.1
+modtime = 1741260185.652853000
+

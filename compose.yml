@@ -1,0 +1,36 @@
+services:
+  so1:
+    networks:
+      splunknet:
+        aliases:
+          - so1
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    platform: linux/amd64
+    hostname: so1
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_STANDALONE_URL=so1
+      - DEBUG=true
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_HEC_TOKEN=${SPLUNK_HEC_TOKEN}
+
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+      - 8088:8088
+      - 8089:8089
+      - 9997:9997
+    volumes:
+      - so1-var:/opt/splunk/var
+      - so1-etc:/opt/splunk/etc
+      - ./app:/opt/splunk/etc/apps/feinstaub
+
+networks:
+  splunknet:
+    driver: bridge
+    attachable: true
+
+
+volumes:
+  so1-var:
+  so1-etc:
