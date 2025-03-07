@@ -1,0 +1,60 @@
+name: Update Latest Release Tag
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-latest-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Get repository name
+        id: repo_name
+        run: echo "name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_OUTPUT
+      
+      - name: Update or create 'latest' tag
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Delete the 'latest' tag if it exists
+          git tag -d latest || true
+          git push origin :refs/tags/latest || true
+          
+          # Create a new 'latest' tag pointing to the same commit as the new release
+          git tag latest
+          git push origin latest
+      
+      - name: Download release asset
+        id: download_asset
+        run: |
+          # Get the URL of the .spl file from the new release
+          ASSET_URL=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | \
+                      jq -r '.assets[] | select(.name | endswith(".spl")) | .browser_download_url')
+          
+          # Download the asset
+          curl -L -o ${{ steps.repo_name.outputs.name }}.spl "$ASSET_URL"
+      
+      - name: Create or update 'latest' release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: latest
+          name: Latest Release
+          body: |
+            This is always the latest release of ${{ steps.repo_name.outputs.name }}.
+            
+            Last updated: ${{ github.event.release.published_at }}
+            Based on release: ${{ github.event.release.tag_name }}
+          files: ${{ steps.repo_name.outputs.name }}.spl
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

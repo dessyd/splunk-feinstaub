@@ -42,8 +42,11 @@ jobs:
         tar -czf ${{ steps.repo_name.outputs.name }}.spl ${{ steps.repo_name.outputs.name }}
         cd ..
         
+        # Move the file to the root for consistent naming
+        cp build/${{ steps.repo_name.outputs.name }}.spl ./${{ steps.repo_name.outputs.name }}.spl
+        
         # Output the path for the next step
-        echo "SPL_PATH=build/${{ steps.repo_name.outputs.name }}.spl" >> $GITHUB_ENV
+        echo "SPL_PATH=${{ steps.repo_name.outputs.name }}.spl" >> $GITHUB_ENV
     
     - name: Get commit hash and date for release tag
       id: commit_info
