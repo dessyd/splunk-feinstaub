@@ -13,6 +13,7 @@ services:
       - DEBUG=true
       - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
       - SPLUNK_HEC_TOKEN=${SPLUNK_HEC_TOKEN}
+      - SPLUNK_APPS_URL=https://github.com/dessyd/splunk-feinstaub/releases/download/latest/splunk-feinstaub.spl
 
     restart: unless-stopped
     ports:
