@@ -27,11 +27,39 @@ export = system
 [lookups]
 export = system
 
+[lookups/sensors.csv]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 9.4.1
+modtime = 1741446781.167057000
+
 [props]
 export = system
 
+[props/feinstaub/FIELDALIAS-feinstaub-cim]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 9.4.1
+modtime = 1741447258.915480000
+
+[props/feinstaub/LOOKUP-sensors]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 9.4.1
+modtime = 1741446969.365663000
+
 [transforms]
 export = system
+
+[transforms/sensors]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 9.4.1
+modtime = 1741446827.166797000
 
 [views/environmental_data]
 version = 9.4.1
